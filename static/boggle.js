@@ -10,7 +10,10 @@ class BoggleGame {
     async handleSubmit(evt) {
         evt.preventDefault()
         console.log("handleSubmit")
-        const res = await axios.get("/valid", { params: { guess_word: guess_word } })
+        const $guess_word = $(".guess_word", this.board)
+        let word = $guess_word.val()
+
+        const res = await axios.get("/valid", { params: { word: word } })
         console.log(res)
     }
 
