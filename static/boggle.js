@@ -8,8 +8,8 @@ class BoggleGame {
         this.timer = setInterval(this.myTimer.bind(this), 1000)
         $(".add-word", this.board).on("submit", this.handleSubmit.bind(this))
     }
-    showMsg(msg) {
-        $('.msg', this.board).text(msg)
+    showMsg(msg, cls) { // add ok and err class to msg
+        $('.msg', this.board).text(msg).addClass(`msg ${cls}`)
     }
     showScore() {
         $('.score', this.board).text(this.score)
@@ -29,7 +29,7 @@ class BoggleGame {
         if (!word)
             return
         else if (this.words.has(word)) {
-            this.showMsg(`${word} is already added. `)
+            this.showMsg(`${word} is already added. `, "err")
             $word.val("")
             return
         }
@@ -37,12 +37,12 @@ class BoggleGame {
         const res = await axios.get("/valid", { params: { guess_word: word } })
         console.log(res)
         if (res.data.result === 'not-on-board')
-            this.showMsg(`${word} is not a valid word on this board`)
+            this.showMsg(`${word} is not a valid word on this board`, "err")
         else if (res.data.result === 'not-word')
-            this.showMsg(`${word} is not a valid word`)
+            this.showMsg(`${word} is not a valid word`, "err")
         else {   //res.data.result === 'ok'
             this.showWords(word)
-            this.showMsg(`${word} is a valid word. Added!`)
+            this.showMsg(`${word} is a valid word. Added!`, "ok")
             this.words.add(word)
             this.score = this.score + word.length
             this.showScore()
