@@ -2,20 +2,71 @@ class BoggleGame {
     constructor(boardId, secs = 60) {
         this.secs = secs
         this.board = $("#" + boardId)
+        this.score = 0
+        this.words = new Set();
 
+        this.timer = setInterval(this.myTimer.bind(this), 1000)
         $(".add-word", this.board).on("submit", this.handleSubmit.bind(this))
-
-
+    }
+    showMsg(msg) {
+        $('.msg', this.board).text(msg)
+    }
+    showScore() {
+        $('.score', this.board).text(this.score)
+    }
+    showTimer() {
+        $('.timer', this.board).text(this.secs)
+    }
+    showWords(word) {
+        $('.words', this.board).append($("<li>", { text: word }))
     }
     async handleSubmit(evt) {
         evt.preventDefault()
         console.log("handleSubmit")
-        const $guess_word = $(".guess_word", this.board)
-        let word = $guess_word.val()
+        const $word = $(".guess_word", this.board)
+        let word = $word.val()
 
-        const res = await axios.get("/valid", { params: { word: word } })
+        if (!word)
+            return
+        else if (this.words.has(word)) {
+            this.showMsg(`${word} is already added. `)
+            $word.val("")
+            return
+        }
+
+        const res = await axios.get("/valid", { params: { guess_word: word } })
+        console.log(res)
+        if (res.data.result === 'not-on-board')
+            this.showMsg(`${word} is not a valid word on this board`)
+        else if (res.data.result === 'not-word')
+            this.showMsg(`${word} is not a valid word`)
+        else {   //res.data.result === 'ok'
+            this.showWords(word)
+            this.showMsg(`${word} is a valid word. Added!`)
+            this.words.add(word)
+            this.score = this.score + word.length
+            this.showScore()
+        }
+
+        $word.val("")
+    }
+
+    async myTimer() {
+        this.secs = this.secs - 1
+        this.showTimer()
+
+        if (this.secs === 0) {
+            clearInterval(this.timer)
+            $(".add-word", this.board).hide()
+            await this.endGame()
+        }
+    }
+
+    async endGame() {
+        const res = await axios.post("/endgame", { score: this.score })
         console.log(res)
     }
+
 
 }
 //

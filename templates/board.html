@@ -9,6 +9,7 @@
 </head>
 
 <body>
+    <h1>Boggle Game!</h1>
     <section id="boggle">
         <table>
             {% for row in board %}
@@ -19,15 +20,33 @@
             </tr>
             {% endfor %}
         </table>
-    </section>
 
-    <p>
-    <form method="POST" class="add-word">
-        <label for="guess_word">Guess</label>
-        <input type="text" name="guess_word" id="guess_word">
-        <button>Submit</button>
-    </form>
-    </p>
+        <p>High Score:
+            <b>{{ highscore }}</b>
+            in <b>{{ nplays }}</b> plays
+        </p>
+
+        <p>
+        <form method="POST" class="add-word">
+            <label for="guess_word">Guess</label>
+            <input type="text" name="guess_word" class="guess_word" id="guess_word">
+            <button>Submit</button>
+        </form>
+        </p>
+
+        <p>
+            Score : <b class="score">0</b> <br>
+            Seconds Left: <b class="timer">60</b>
+        </p>
+
+        <p class="msg">
+
+        </p>
+
+        <ul class="words">
+
+        </ul>
+    </section>
     <script src="http://unpkg.com/jquery"></script>
     <script src="https://unpkg.com/axios@0.19.0/dist/axios.js"></script>
     <script src="/static/boggle.js"></script>
